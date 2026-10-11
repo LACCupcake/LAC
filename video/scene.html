@@ -4,66 +4,44 @@
 <meta charset="utf-8">
 <title>LAC Teams – Intro</title>
 <style>
-  :root { --w: 1920px; --h: 1080px; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: var(--w); height: var(--h); background: #000; overflow: hidden; }
+  html, body { width: 1920px; height: 1080px; background: #000; overflow: hidden; }
   body { font-family: "Inter Display", "Inter", system-ui, sans-serif; color: #f5f5f7; -webkit-font-smoothing: antialiased; }
   #stage { position: absolute; inset: 0; overflow: hidden; background: #000; }
 
-  /* ambient light */
-  .orb { position: absolute; border-radius: 50%; filter: blur(140px); will-change: transform, opacity; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(140px); }
   #orb1 { width: 900px; height: 900px; background: radial-gradient(circle, #5b3cc4 0%, transparent 70%); }
   #orb2 { width: 800px; height: 800px; background: radial-gradient(circle, #2d4bd6 0%, transparent 70%); }
   #orb3 { width: 700px; height: 700px; background: radial-gradient(circle, #b23a8a 0%, transparent 70%); }
-  #grain { position: absolute; inset: 0; opacity: .05; mix-blend-mode: overlay; }
+  #grain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .05; mix-blend-mode: overlay; }
   #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.85) 100%); }
 
-  .layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-  .center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  /* everything below is positioned relative to the screen centre */
+  #lockup, #headline, #teams { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 
-  /* logo lockup */
-  #logoWrap { position: absolute; left: 50%; top: 50%; width: 420px; height: 380px; margin: -190px 0 0 -210px; }
-  #logoWrap svg { width: 100%; height: 100%; overflow: visible; }
-  #divider { position: absolute; left: 50%; top: 50%; width: 2px; height: 340px; margin-top: -170px; background: linear-gradient(transparent, rgba(255,255,255,.85) 20%, rgba(255,255,255,.85) 80%, transparent); transform-origin: center; }
-  #wordmark { position: absolute; left: 50%; top: 50%; white-space: nowrap; }
-  #wordmark .line1 { font-size: 92px; line-height: 1; letter-spacing: .32em; }
+  #logo { position: absolute; width: 460px; height: 416px; left: -230px; top: -208px; }
+  #logo svg { width: 100%; height: 100%; overflow: visible; }
+  #divider { position: absolute; left: -200px; top: -170px; width: 2px; height: 340px; transform-origin: center;
+             background: linear-gradient(transparent, rgba(255,255,255,.85) 20%, rgba(255,255,255,.85) 80%, transparent); }
+  #wordmark { position: absolute; left: -100px; top: -46px; white-space: nowrap; font-size: 92px; line-height: 1; }
   #wordmark .lac { font-weight: 200; }
   #wordmark .teams { font-weight: 700; }
-  #wordmark .sub { margin-top: 26px; font-family: "Inter"; font-size: 30px; font-weight: 400; letter-spacing: .08em; color: rgba(245,245,247,.72); text-align: right; padding-right: .32em; }
-  #wordmark .sub b { font-weight: 300; color: rgba(245,245,247,.35); padding: 0 .5em; }
-  .ch { display: inline-block; will-change: transform, opacity, filter; }
+  .ch, .word { display: inline-block; }
 
-  /* headlines */
-  .headline { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; letter-spacing: -.035em; }
-  .word { display: inline-block; will-change: transform, opacity, filter; padding: 0 .12em; }
-  #h1 { font-size: 150px; line-height: 1; top: 360px; }
-  #h2 { font-size: 72px; font-weight: 600; line-height: 1.1; top: 560px; letter-spacing: -.02em; }
-  .grad-brand { background: linear-gradient(90deg, #a78bfa, #818cf8 40%, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #headline { }
+  #headline .inner { position: absolute; left: -900px; width: 1800px; top: -50px; text-align: center; font-size: 96px; font-weight: 700; letter-spacing: -.03em; line-height: 1; transform-origin: center; }
+  #headline .word { padding: 0 .11em; }
+  .grad-brand { background: linear-gradient(90deg, #a78bfa, #818cf8 40%, #f0abfc 70%, #a78bfa); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-  /* team reveals */
-  .team { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .team .eyebrow { font-family: "Inter"; font-size: 30px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(245,245,247,.55); margin-bottom: 18px; }
-  .team .name { font-size: 300px; font-weight: 800; letter-spacing: -.05em; line-height: 1; padding: 0 40px 30px; background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
-  #tPrime .name   { background-image: linear-gradient(100deg, #ffffff 0%, #c4b5fd 35%, #ffffff 55%, #a78bfa 100%); }
-  #tAcademy .name { background-image: linear-gradient(100deg, #93c5fd 0%, #818cf8 40%, #c4b5fd 60%, #60a5fa 100%); }
-  #tSpark .name   { background-image: linear-gradient(100deg, #fda4af 0%, #f0abfc 35%, #fb923c 65%, #f472b6 100%); }
+  #teams .row { position: absolute; left: -900px; width: 1800px; top: -80px; display: flex; justify-content: center; align-items: center; }
+  .tname { font-size: 150px; font-weight: 800; letter-spacing: -.045em; line-height: 1; padding: 0 20px 24px;
+           background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sep { width: 2px; height: 110px; margin: 0 46px 18px; background: linear-gradient(transparent, rgba(255,255,255,.45), transparent); transform-origin: center; }
+  #nPrime   { background-image: linear-gradient(100deg, #ffffff 0%, #c4b5fd 30%, #ffffff 50%, #a78bfa 75%, #ffffff 100%); }
+  #nAcademy { background-image: linear-gradient(100deg, #93c5fd 0%, #818cf8 30%, #e0e7ff 50%, #60a5fa 75%, #93c5fd 100%); }
+  #nSpark   { background-image: linear-gradient(100deg, #fda4af 0%, #f0abfc 30%, #fff1f2 50%, #fb923c 75%, #f472b6 100%); }
 
-  /* cards */
-  #cards { position: absolute; left: 0; right: 0; top: 50%; display: flex; justify-content: center; gap: 44px; }
-  .card { width: 480px; height: 560px; border-radius: 44px; position: relative; overflow: hidden;
-          background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-          border: 1px solid rgba(255,255,255,.14); box-shadow: 0 40px 120px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18); }
-  .card .glow { position: absolute; width: 520px; height: 520px; border-radius: 50%; filter: blur(80px); opacity: .55; left: -20px; top: -260px; }
-  .card .num { position: absolute; left: 48px; top: 44px; font-family: "Inter"; font-size: 24px; font-weight: 600; letter-spacing: .2em; color: rgba(245,245,247,.5); }
-  .card .mini { position: absolute; right: 44px; top: 40px; width: 54px; opacity: .85; }
-  .card .cname { position: absolute; left: 46px; bottom: 96px; font-size: 92px; font-weight: 800; letter-spacing: -.045em; line-height: 1; }
-  .card .ctag { position: absolute; left: 50px; bottom: 54px; font-family: "Inter"; font-size: 24px; font-weight: 500; color: rgba(245,245,247,.6); letter-spacing: .02em; }
-
-  #pl { position: absolute; left: 0; right: 0; top: 140px; text-align: center; font-family: "Inter"; font-size: 30px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(245,245,247,.6); }
-
-  /* outro */
-  #outroSub { position: absolute; left: 0; right: 0; top: 760px; text-align: center; font-family: "Inter"; font-size: 30px; letter-spacing: .32em; text-transform: uppercase; color: rgba(245,245,247,.55); }
-  #fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+  #fade { position: absolute; inset: 0; background: #000; }
 </style>
 </head>
 <body>
@@ -72,48 +50,42 @@
   <div class="orb" id="orb2"></div>
   <div class="orb" id="orb3"></div>
 
-  <!-- logo lockup -->
-  <div id="divider"></div>
-  <div id="logoWrap">
-    <svg viewBox="23 72 625 566">
-      <defs>
-        <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-          <stop offset="0" stop-color="#fff" stop-opacity="0"/>
-          <stop offset=".5" stop-color="#fff" stop-opacity="1"/>
-          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-        </linearGradient>
-        <clipPath id="logoClip"><path id="clipPath" d=""/></clipPath>
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="14" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <path id="logoFill" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
-      <path id="logoStroke" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" filter="url(#glow)"/>
-      <g clip-path="url(#logoClip)">
-        <rect id="shineRect" x="0" y="40" width="260" height="640" fill="url(#shine)" transform="skewX(-20)"/>
-      </g>
-    </svg>
+  <div id="lockup">
+    <div id="divider"></div>
+    <div id="logo">
+      <svg viewBox="23 72 625 566">
+        <defs>
+          <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+            <stop offset=".5" stop-color="#fff" stop-opacity=".9"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="snakeGrad" gradientUnits="userSpaceOnUse" x1="1700" y1="300" x2="100" y2="600">
+            <stop offset="0" stop-color="#c4b5fd"/>
+            <stop offset=".55" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#ffffff"/>
+          </linearGradient>
+          <clipPath id="logoClip"><path id="clipShape"/></clipPath>
+        </defs>
+        <g id="snakeG" fill="none" stroke="url(#snakeGrad)" stroke-linecap="round" stroke-linejoin="round">
+          <path id="snake"/>
+          <path id="branchC"/>
+          <path id="branchFoot"/>
+        </g>
+        <path id="sharp" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+        <g clip-path="url(#logoClip)"><rect id="shineRect" y="40" width="240" height="640" fill="url(#shine)" transform="skewX(-20)"/></g>
+      </svg>
+    </div>
+    <div id="wordmark"><span class="lac"></span>&nbsp;<span class="teams"></span></div>
   </div>
-  <div id="wordmark">
-    <div class="line1"><span class="lac"></span>&nbsp;<span class="teams"></span></div>
-    <div class="sub">Prime<b>|</b>Academy<b>|</b>Spark</div>
-  </div>
 
-  <!-- headlines -->
-  <div class="headline" id="h1"></div>
-  <div class="headline" id="h2"></div>
+  <div id="headline"><div class="inner"></div></div>
 
-  <!-- teams -->
-  <div class="team" id="tPrime"><div class="eyebrow">Team 01</div><div class="name">Prime</div></div>
-  <div class="team" id="tAcademy"><div class="eyebrow">Team 02</div><div class="name">Academy</div></div>
-  <div class="team" id="tSpark"><div class="eyebrow">Team 03</div><div class="name">Spark</div></div>
-
-  <!-- cards -->
-  <div id="pl">Prime League</div>
-  <div id="cards"></div>
-
-  <div id="outroSub">Drei Teams · Eine Organisation</div>
+  <div id="teams"><div class="row">
+    <div class="tname" id="nPrime">Prime</div><div class="sep"></div>
+    <div class="tname" id="nAcademy">Academy</div><div class="sep"></div>
+    <div class="tname" id="nSpark">Spark</div>
+  </div></div>
 
   <canvas id="grain" width="480" height="270"></canvas>
   <div id="vignette"></div>
@@ -121,233 +93,175 @@
 </div>
 
 <script>
-const LOGO_D = "M340,82 L497,362 L435,362 L340,193 L128,570 L209,570 L340,336 L386,418 L520,418 L571,509 L515,509 L494,472 L416,472 L471,570 L605,570 L638,628 L443,628 L340,445 L270,570 L332,570 L365,628 L33,628 Z";
-const DURATION = 21;
+const DURATION = 12;
 
-// ---------- easing ----------
+// --- logo geometry (viewBox units) ---------------------------------------
+// exact brand outline, used once the line has settled
+const LOGO_D = "M340,82 L497,362 L435,362 L340,193 L128,570 L209,570 L340,336 L386,418 L520,418 L571,509 L515,509 L494,472 L416,472 L471,570 L605,570 L638,628 L443,628 L340,445 L270,570 L332,570 L365,628 L33,628 Z";
+// centre-line of the logo strokes, drawn with round caps/joins
+const LEAD = "M1750,260 C1520,260 1480,720 1260,720 C1040,720 1010,430 850,430 C700,430 690,599 593,599";
+const MAIN = "L457.1,599 L340,390.5 L222.9,599 L81,599 L340,137.5 L450.4,334";
+const BRANCH_C = "M370.6,445 L507,445 L527.8,482";
+const BRANCH_FOOT = "M222.9,599 L320,599";
+const STROKE_FULL = 57;
+
+// --- easing ------------------------------------------------------------
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
-// CSS-like cubic-bezier solver
 function bezier(x1, y1, x2, y2) {
   const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
   const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
-  const sx = t => ((ax * t + bx) * t + cx) * t;
-  const sy = t => ((ay * t + by) * t + cy) * t;
+  const sx = t => ((ax * t + bx) * t + cx) * t, sy = t => ((ay * t + by) * t + cy) * t;
   const dx = t => (3 * ax * t + 2 * bx) * t + cx;
   return x => {
     if (x <= 0) return 0; if (x >= 1) return 1;
     let t = x;
-    for (let i = 0; i < 8; i++) { const e = sx(t) - x; const d = dx(t); if (Math.abs(e) < 1e-6 || !d) break; t -= e / d; }
+    for (let i = 0; i < 10; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-7 || !d) break; t -= e / d; }
     return sy(clamp(t));
   };
 }
 const ease = {
-  apple: bezier(0.25, 0.1, 0.25, 1),       // default smooth
-  out: bezier(0.16, 1, 0.3, 1),            // expo-like out
+  smooth: bezier(0.45, 0, 0.15, 1),    // Apple-ish in/out with long soft landing
+  out: bezier(0.16, 1, 0.3, 1),
   inOut: bezier(0.65, 0, 0.35, 1),
-  in: bezier(0.55, 0, 1, 0.45),
+  snake: bezier(0.5, 0.05, 0.2, 1),
 };
-// progress of t inside [start, start+dur]
 const p = (t, start, dur, e = ease.out) => e(clamp((t - start) / dur));
-// in-hold-out envelope
-const env = (t, inStart, inDur, outStart, outDur) =>
-  p(t, inStart, inDur) * (1 - p(t, outStart, outDur, ease.in));
 
-// ---------- build DOM ----------
+// --- DOM ---------------------------------------------------------------
 const $ = s => document.querySelector(s);
-const logoFill = $('#logoFill'), logoStroke = $('#logoStroke');
-logoFill.setAttribute('d', LOGO_D); logoStroke.setAttribute('d', LOGO_D); $('#clipPath').setAttribute('d', LOGO_D);
-const strokeLen = logoStroke.getTotalLength();
-logoStroke.style.strokeDasharray = strokeLen;
+const snake = $('#snake'), brC = $('#branchC'), brF = $('#branchFoot'), sharp = $('#sharp');
+snake.setAttribute('d', LEAD + MAIN);
+brC.setAttribute('d', BRANCH_C); brF.setAttribute('d', BRANCH_FOOT);
+sharp.setAttribute('d', LOGO_D); $('#clipShape').setAttribute('d', LOGO_D);
 
-function splitChars(el, text) {
-  return [...text].map(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s); return s; });
+// measure lengths
+const tmp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+tmp.setAttribute('d', LEAD); $('#snakeG').appendChild(tmp);
+const leadLen = tmp.getTotalLength(); tmp.remove();
+const totalLen = snake.getTotalLength();
+const cLen = brC.getTotalLength(), fLen = brF.getTotalLength();
+// distance along the snake at which each branch sprouts
+function distTo(x, y) {
+  let best = 0, bd = 1e9;
+  for (let s = leadLen; s <= totalLen; s += 1) { const q = snake.getPointAtLength(s); const d = Math.hypot(q.x - x, q.y - y); if (d < bd) { bd = d; best = s; } }
+  return best;
 }
-const lacChars = splitChars($('#wordmark .lac'), 'LAC');
-const teamsChars = splitChars($('#wordmark .teams'), 'TEAMS');
-const wmChars = [...lacChars, ...teamsChars];
+const jC = distTo(370.6, 445), jF = distTo(222.9, 599);
 
-function splitWords(el, html) {
-  return html.split('|').map(w => { const s = document.createElement('span'); s.className = 'word'; s.innerHTML = w; el.appendChild(s); return s; });
-}
-const h1Words = splitWords($('#h1'), 'Drei|Teams.');
-const h2Words = splitWords($('#h2'), 'Eine|<span class="grad-brand">Organisation.</span>');
-const h3Words = []; // second headline line set reused later
-
-const teams = [
-  { id: 'Prime',   num: '01', tag: 'Prime League',   glow: '#8b5cf6' },
-  { id: 'Academy', num: '02', tag: 'Prime League',  glow: '#3b82f6' },
-  { id: 'Spark',   num: '03', tag: 'Prime League', glow: '#ec4899' },
-];
-const miniLogo = `<svg class="mini" viewBox="23 72 625 566"><path fill="#fff" d="${LOGO_D}"/></svg>`;
-const cards = teams.map(tm => {
-  const c = document.createElement('div'); c.className = 'card';
-  c.innerHTML = `<div class="glow" style="background:radial-gradient(circle, ${tm.glow}, transparent 70%)"></div>
-    <div class="num">${tm.num}</div>${miniLogo}
-    <div class="cname">${tm.id}</div><div class="ctag">${tm.tag}</div>`;
-  $('#cards').appendChild(c); return c;
+const split = (el, text) => [...text].map(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s); return s; });
+const wmChars = [...split($('#wordmark .lac'), 'LAC'), ...split($('#wordmark .teams'), 'TEAMS')];
+const hlWords = 'Drei|Teams|in|der|<span class="grad-brand">Prime&nbsp;League.</span>'.split('|').map(w => {
+  const s = document.createElement('span'); s.className = 'word'; s.innerHTML = w; $('#headline .inner').appendChild(s); return s;
 });
+const names = ['#nPrime', '#nAcademy', '#nSpark'].map($);
+const seps = [...document.querySelectorAll('.sep')];
 
-// film grain (deterministic per frame)
-const g = $('#grain').getContext('2d');
-const gImg = g.createImageData(480, 270);
+const g = $('#grain').getContext('2d'), gImg = g.createImageData(480, 270);
 function grain(seed) {
   let s = seed * 9301 + 49297;
-  for (let i = 0; i < gImg.data.length; i += 4) {
-    s = (s * 16807) % 2147483647; const v = s & 255;
-    gImg.data[i] = gImg.data[i + 1] = gImg.data[i + 2] = v; gImg.data[i + 3] = 255;
-  }
+  for (let i = 0; i < gImg.data.length; i += 4) { s = (s * 16807) % 2147483647; gImg.data[i] = gImg.data[i + 1] = gImg.data[i + 2] = s & 255; gImg.data[i + 3] = 255; }
   g.putImageData(gImg, 0, 0);
 }
 
-// ---------- helpers ----------
-function setFx(el, { o = 1, x = 0, y = 0, s = 1, blur = 0, extra = '' } = {}) {
+function fx(el, { o = 1, x = 0, y = 0, s = 1, blur = 0 } = {}) {
   el.style.opacity = o;
-  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s}) ${extra}`;
+  el.style.transform = `translate3d(${x}px,${y}px,0) scale(${s})`;
   el.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
 }
-// Apple-style "blur rise" reveal for a list of elements
-function reveal(els, t, start, stagger, dur, outStart, outDur, rise = 40, blurAmt = 18) {
-  els.forEach((el, i) => {
-    const a = p(t, start + i * stagger, dur);
-    const b = outStart == null ? 0 : p(t, outStart + i * stagger * 0.5, outDur, ease.inOut);
-    setFx(el, { o: a * (1 - b), y: (1 - a) * rise - b * rise * 0.6, blur: (1 - a) * blurAmt + b * blurAmt, s: 1 - b * 0.03 });
-  });
-}
 
-// ---------- render ----------
+// --- timeline ------------------------------------------------------------
+// 0.0 – 2.9  line slithers in and lays itself into the logo, then swells
+// 2.9 – 4.2  logo glides left, "LAC TEAMS" assembles beside it
+// 4.6 – 5.6  lockup rises to the top, headline appears in the freed space
+// 6.6 – 7.6  headline lifts, the three team names rise beneath it
+// 7.6 – 11   hold with light sweeps; 11 – 12 fade out
 window.render = function (t) {
   grain(Math.floor(t * 24));
 
-  // ambient orbs drift slowly; brightness follows scene
-  const amb = 0.25 + 0.55 * p(t, 0, 2.5, ease.apple) - 0.2 * env(t, 9.6, 0.6, 14.4, 0.6);
-  const o1 = $('#orb1'), o2 = $('#orb2'), o3 = $('#orb3');
-  o1.style.transform = `translate(${-200 + Math.sin(t * .35) * 160}px, ${-250 + Math.cos(t * .27) * 120}px)`;
-  o2.style.transform = `translate(${1250 + Math.cos(t * .3) * 180}px, ${400 + Math.sin(t * .22) * 140}px)`;
-  o3.style.transform = `translate(${600 + Math.sin(t * .25 + 2) * 260}px, ${650 + Math.cos(t * .31) * 90}px)`;
-  o1.style.opacity = amb; o2.style.opacity = amb * 0.8; o3.style.opacity = amb * 0.55;
+  // ambient light
+  const amb = 0.3 + 0.5 * p(t, 0, 2.5, ease.smooth);
+  const [o1, o2, o3] = ['#orb1', '#orb2', '#orb3'].map($);
+  o1.style.transform = `translate(${-200 + Math.sin(t * .45) * 160}px, ${-250 + Math.cos(t * .35) * 120}px)`;
+  o2.style.transform = `translate(${1250 + Math.cos(t * .4) * 180}px, ${400 + Math.sin(t * .3) * 140}px)`;
+  o3.style.transform = `translate(${600 + Math.sin(t * .33 + 2) * 260}px, ${650 + Math.cos(t * .41) * 90}px)`;
+  o1.style.opacity = amb; o2.style.opacity = amb * .8; o3.style.opacity = amb * .55;
 
-  // ---- Scene 1: logo draw (0 – 6.4s) & Scene 6: outro (16.8 – 21s) ----
-  const logo = $('#logoWrap');
-  const draw = p(t, 0.5, 2.1, ease.inOut);
-  const fill = p(t, 2.0, 1.1, ease.apple);
-  logoStroke.style.strokeDashoffset = strokeLen * (1 - draw);
-  logoStroke.style.opacity = (draw > 0 ? 1 : 0) * (1 - p(t, 2.4, 0.9, ease.apple));
-  logoFill.style.opacity = fill;
+  // ---- snake ----
+  const draw = p(t, 0.15, 2.05, ease.snake);
+  const head = draw * totalLen;
+  const body = 900;                                   // visible length while travelling
+  const tail = clamp(head - body, 0, leadLen);       // tail stops where the logo starts
+  const swell = p(t, 1.95, 0.75, ease.smooth);
+  const width = lerp(14, STROKE_FULL, swell);
+  snake.style.strokeWidth = width;
+  snake.style.strokeDasharray = `0 ${tail} ${Math.max(0.001, head - tail)} ${totalLen * 2}`;
+  [[brC, jC, cLen], [brF, jF, fLen]].forEach(([el, j, len]) => {
+    const l = clamp(head - j, 0, len);
+    el.style.strokeWidth = width;
+    el.style.strokeDasharray = `${Math.max(0.001, l)} ${len * 2}`;
+    el.style.opacity = l > 0.5 ? 1 : 0;
+  });
+  // rounded line → exact brand mark, hidden under a light sweep
+  const settle = p(t, 2.55, 0.45, ease.smooth);
+  sharp.style.opacity = settle;
+  $('#snakeG').style.opacity = 1 - p(t, 2.75, 0.3, ease.smooth);
+  const sh = p(t, 2.4, 1.0, ease.inOut);
+  const sh2 = p(t, 8.3, 1.1, ease.inOut);
+  const sr = $('#shineRect');
+  const shv = t < 6 ? sh : sh2;
+  sr.setAttribute('x', lerp(-350, 950, shv));
+  sr.style.opacity = shv > 0 && shv < 1 ? 1 : 0;
 
-  // shine sweep across the logo
-  const sh1 = p(t, 2.7, 1.3, ease.inOut), sh2 = p(t, 18.0, 1.4, ease.inOut);
-  const shX = t < 10 ? lerp(-300, 900, sh1) : lerp(-300, 900, sh2);
-  const shRect = $('#shineRect');
-  shRect.setAttribute('x', shX);
-  shRect.style.opacity = (t < 10 ? (sh1 > 0 && sh1 < 1) : (sh2 > 0 && sh2 < 1)) ? 0.85 : 0;
+  // ---- lockup ----
+  const slide = p(t, 2.9, 1.3, ease.smooth);
+  const rise = p(t, 4.6, 1.2, ease.smooth);
+  const intro = p(t, 0.15, 3.0, ease.out);
+  const logo = $('#logo');
+  const glow = 0.45 * swell;
+  fx(logo, { x: lerp(0, -560, slide), s: lerp(1.12, 1, intro) * lerp(1.0, 0.92, slide) });
+  logo.style.filter = `drop-shadow(0 0 ${36 + 18 * Math.sin(t * 1.6) ** 2}px rgba(139,92,246,${glow}))`;
 
-  // lockup motion: centered → slides left; then exits
-  const slide = p(t, 3.5, 1.4, ease.out);
-  const exit1 = p(t, 6.0, 0.8, ease.inOut);
-  // outro: logo comes back centered, smaller, above text
-  const outIn = p(t, 16.9, 1.6, ease.out);
-  const finalFade = p(t, 20.0, 1.0, ease.inOut);
-
-  let lx, ly, ls, lo, lb;
-  if (t < 12) {
-    lx = lerp(0, -510, slide); ly = 0;
-    ls = lerp(1.18, 1, p(t, 0.3, 3.4, ease.out)) * lerp(1, 0.94, exit1);
-    lo = (t < 0.5 ? 0 : 1) * (1 - exit1);
-    lb = exit1 * 20;
-  } else {
-    lx = 0; ly = lerp(-60, -90, outIn);
-    ls = lerp(0.55, 0.62, outIn) * lerp(1, 1.04, finalFade);
-    lo = outIn; lb = (1 - outIn) * 24;
-  }
-  setFx(logo, { o: lo, x: lx, y: ly, s: ls, blur: lb });
-  logo.style.filter = (lb > .05 ? `blur(${lb}px) ` : '') + `drop-shadow(0 0 ${30 + 30 * Math.sin(t * 1.5) ** 2}px rgba(139,92,246,${0.35 * fill}))`;
-  if (t >= 12) { logoStroke.style.opacity = 0; logoFill.style.opacity = 1; }
-
-  // divider
-  const div = $('#divider');
-  const dv = p(t, 3.8, 1.0, ease.out);
-  div.style.opacity = dv * (1 - exit1);
-  div.style.transform = `translateX(-200px) scaleY(${dv})`;
-
-  // wordmark
-  const wm = $('#wordmark');
-  wm.style.transform = `translate(-100px, -72px) scale(${lerp(1, 0.97, exit1)})`;
-  wm.style.opacity = 1 - exit1;
-  wm.style.filter = exit1 > .01 ? `blur(${exit1 * 16}px)` : 'none';
-  wm.style.letterSpacing = '0';
-  $('#wordmark .line1').style.letterSpacing = `${lerp(.6, .32, p(t, 4.0, 1.6, ease.out))}em`;
+  const dv = p(t, 3.25, 0.9, ease.out);
+  $('#divider').style.opacity = dv;
+  $('#divider').style.transform = `scaleY(${dv})`;
+  $('#wordmark').style.letterSpacing = `${lerp(.55, .32, p(t, 3.2, 1.4, ease.out))}em`;
   wmChars.forEach((c, i) => {
-    const a = p(t, 4.0 + i * 0.06, 0.9);
-    setFx(c, { o: a, x: (1 - a) * 30, blur: (1 - a) * 14 });
+    const a = p(t, 3.2 + i * 0.045, 0.8);
+    fx(c, { o: a, x: (1 - a) * 26, blur: (1 - a) * 12 });
   });
-  const sub = $('#wordmark .sub');
-  const sa = p(t, 4.9, 1.0);
-  setFx(sub, { o: sa * 1, y: (1 - sa) * 16, blur: (1 - sa) * 8 });
+  const L = $('#lockup');
+  L.style.transform = `translate(${lerp(0, 45, slide)}px, ${lerp(0, -200, rise)}px) scale(${lerp(1, 0.5, rise)})`;
 
-  // ---- Scene 2: headline (6.8 – 9.8s) ----
-  reveal(h1Words, t, 6.9, 0.16, 1.0, 9.1, 0.7, 50, 20);
-  reveal(h2Words, t, 7.6, 0.18, 1.0, 9.2, 0.7, 40, 16);
-  // gradient shimmer
-  document.querySelectorAll('.grad-brand').forEach(el => el.style.backgroundPosition = `${(t * 30) % 200}% 0`);
+  // ---- headline ----
+  const lift = p(t, 6.6, 1.1, ease.smooth);
+  hlWords.forEach((w, i) => {
+    const a = p(t, 5.2 + i * 0.09, 0.9);
+    fx(w, { o: a, y: (1 - a) * 44, blur: (1 - a) * 18 });
+  });
+  const hi = $('#headline .inner');
+  hi.style.transform = `translateY(${lerp(60, -20, lift)}px) scale(${lerp(1, 0.6, lift)})`;
+  hi.style.color = `rgba(245,245,247,${lerp(1, 0.78, lift)})`;
+  document.querySelectorAll('.grad-brand').forEach(el => el.style.backgroundPosition = `${lerp(100, 0, p(t, 5.3, 4.5, ease.smooth))}% 0`);
 
-  // ---- Scene 3: team reveals (9.9 – 14.7s) ----
-  [['#tPrime', 10.0], ['#tAcademy', 11.6], ['#tSpark', 13.2]].forEach(([sel, st]) => {
-    const el = $(sel);
-    const a = p(t, st, 0.9, ease.out);
-    const b = p(t, st + 1.25, 0.5, ease.inOut);
-    const name = el.querySelector('.name'), eb = el.querySelector('.eyebrow');
-    el.style.opacity = a > 0 ? 1 : 0;
-    el.style.visibility = (a > 0 && b < 1) ? 'visible' : 'hidden';
-    setFx(name, { o: a * (1 - b), s: lerp(1.12, 1, a) * lerp(1, 0.92, b), blur: (1 - a) * 30 + b * 24, y: -b * 30 });
-    name.style.backgroundPosition = `${lerp(100, 0, p(t, st, 1.8, ease.apple))}% 0`;
-    const ea = p(t, st + 0.15, 0.8);
-    setFx(eb, { o: ea * (1 - b), y: (1 - ea) * 20 - b * 20, blur: (1 - ea) * 10 + b * 10 });
+  // ---- team names ----
+  names.forEach((n, i) => {
+    const a = p(t, 6.85 + i * 0.12, 1.05);
+    fx(n, { o: a, y: (1 - a) * 70 + 170, s: lerp(1.06, 1, a), blur: (1 - a) * 22 });
+    n.style.backgroundPosition = `${lerp(100, 0, p(t, 7.0 + i * 0.12, 3.4, ease.smooth))}% 0`;
+  });
+  seps.forEach((s, i) => {
+    const a = p(t, 7.25 + i * 0.1, 0.8);
+    s.style.opacity = a; s.style.transform = `translateY(170px) scaleY(${a})`;
   });
 
-  // ---- Scene 4: cards (14.8 – 16.9s) ----
-  const cardsOut = p(t, 16.6, 0.7, ease.inOut);
-  const pla = p(t, 14.8, 0.9);
-  setFx($('#pl'), { o: pla * (1 - cardsOut), y: (1 - pla) * 20, blur: (1 - pla) * 10 + cardsOut * 12 });
-  $('#cards').style.transform = `translateY(-250px)`;
-  cards.forEach((c, i) => {
-    const a = p(t, 14.9 + i * 0.14, 1.2, ease.out);
-    const out = p(t, 16.5 + i * 0.05, 0.7, ease.inOut);
-    setFx(c, {
-      o: a * (1 - out),
-      y: (1 - a) * 160 - out * 40,
-      s: lerp(0.92, 1, a) * lerp(1, 0.96, out),
-      blur: (1 - a) * 14 + out * 18,
-      extra: `rotateX(${(1 - a) * 18}deg)`
-    });
-    c.querySelector('.glow').style.transform = `translate(${Math.sin(t * .8 + i) * 60}px, ${Math.cos(t * .6 + i) * 30}px)`;
-  });
-  $('#cards').style.perspective = '1600px';
-
-  // ---- Scene 5: outro text ----
-  const wo = p(t, 17.6, 1.2);
-  // reuse wordmark-style text for outro via h1/h2 slots would clash; use dedicated layout:
-  const os = $('#outroSub');
-  setFx(os, { o: wo, y: (1 - wo) * 20, blur: (1 - wo) * 10 });
-
-  if (!window._outroTitle) {
-    const d = document.createElement('div');
-    d.id = 'outroTitle';
-    d.style.cssText = 'position:absolute;left:0;right:0;top:650px;text-align:center;font-size:84px;line-height:1;letter-spacing:.32em;padding-left:.32em;';
-    d.innerHTML = '<span style="font-weight:200">LAC</span> <span style="font-weight:700">TEAMS</span>';
-    $('#stage').insertBefore(d, $('#grain'));
-    window._outroTitle = d;
-  }
-  const ot = p(t, 17.3, 1.3);
-  setFx(window._outroTitle, { o: ot, y: (1 - ot) * 30, blur: (1 - ot) * 16 });
-  window._outroTitle.style.letterSpacing = `${lerp(.5, .32, ot)}em`;
-
-  // global fade in/out
-  $('#fade').style.opacity = 1 - p(t, 0, 0.6, ease.apple) + finalFade;
+  // ---- global ----
+  const out = p(t, 10.9, 1.0, ease.inOut);
+  $('#stage').style.transform = `scale(${lerp(1, 0.985, out)})`;
+  $('#fade').style.opacity = (1 - p(t, 0, 0.5, ease.smooth)) + out;
 };
 
 window.DURATION = DURATION;
-// live preview when opened in a browser
 if (!location.search.includes('capture')) {
   const t0 = performance.now();
   (function loop() { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); })();
