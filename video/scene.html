@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>LAC Teams – Intro</title>
+<style>
+  :root { --w: 1920px; --h: 1080px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: var(--w); height: var(--h); background: #000; overflow: hidden; }
+  body { font-family: "Inter Display", "Inter", system-ui, sans-serif; color: #f5f5f7; -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; inset: 0; overflow: hidden; background: #000; }
+
+  /* ambient light */
+  .orb { position: absolute; border-radius: 50%; filter: blur(140px); will-change: transform, opacity; }
+  #orb1 { width: 900px; height: 900px; background: radial-gradient(circle, #5b3cc4 0%, transparent 70%); }
+  #orb2 { width: 800px; height: 800px; background: radial-gradient(circle, #2d4bd6 0%, transparent 70%); }
+  #orb3 { width: 700px; height: 700px; background: radial-gradient(circle, #b23a8a 0%, transparent 70%); }
+  #grain { position: absolute; inset: 0; opacity: .05; mix-blend-mode: overlay; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.85) 100%); }
+
+  .layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+
+  /* logo lockup */
+  #logoWrap { position: absolute; left: 50%; top: 50%; width: 420px; height: 380px; margin: -190px 0 0 -210px; }
+  #logoWrap svg { width: 100%; height: 100%; overflow: visible; }
+  #divider { position: absolute; left: 50%; top: 50%; width: 2px; height: 340px; margin-top: -170px; background: linear-gradient(transparent, rgba(255,255,255,.85) 20%, rgba(255,255,255,.85) 80%, transparent); transform-origin: center; }
+  #wordmark { position: absolute; left: 50%; top: 50%; white-space: nowrap; }
+  #wordmark .line1 { font-size: 92px; line-height: 1; letter-spacing: .32em; }
+  #wordmark .lac { font-weight: 200; }
+  #wordmark .teams { font-weight: 700; }
+  #wordmark .sub { margin-top: 26px; font-family: "Inter"; font-size: 30px; font-weight: 400; letter-spacing: .08em; color: rgba(245,245,247,.72); text-align: right; padding-right: .32em; }
+  #wordmark .sub b { font-weight: 300; color: rgba(245,245,247,.35); padding: 0 .5em; }
+  .ch { display: inline-block; will-change: transform, opacity, filter; }
+
+  /* headlines */
+  .headline { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; letter-spacing: -.035em; }
+  .word { display: inline-block; will-change: transform, opacity, filter; padding: 0 .12em; }
+  #h1 { font-size: 150px; line-height: 1; top: 360px; }
+  #h2 { font-size: 72px; font-weight: 600; line-height: 1.1; top: 560px; letter-spacing: -.02em; }
+  .grad-brand { background: linear-gradient(90deg, #a78bfa, #818cf8 40%, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* team reveals */
+  .team { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .team .eyebrow { font-family: "Inter"; font-size: 30px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(245,245,247,.55); margin-bottom: 18px; }
+  .team .name { font-size: 300px; font-weight: 800; letter-spacing: -.05em; line-height: 1; padding: 0 40px 30px; background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #tPrime .name   { background-image: linear-gradient(100deg, #ffffff 0%, #c4b5fd 35%, #ffffff 55%, #a78bfa 100%); }
+  #tAcademy .name { background-image: linear-gradient(100deg, #93c5fd 0%, #818cf8 40%, #c4b5fd 60%, #60a5fa 100%); }
+  #tSpark .name   { background-image: linear-gradient(100deg, #fda4af 0%, #f0abfc 35%, #fb923c 65%, #f472b6 100%); }
+
+  /* cards */
+  #cards { position: absolute; left: 0; right: 0; top: 50%; display: flex; justify-content: center; gap: 44px; }
+  .card { width: 480px; height: 560px; border-radius: 44px; position: relative; overflow: hidden;
+          background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+          border: 1px solid rgba(255,255,255,.14); box-shadow: 0 40px 120px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18); }
+  .card .glow { position: absolute; width: 520px; height: 520px; border-radius: 50%; filter: blur(80px); opacity: .55; left: -20px; top: -260px; }
+  .card .num { position: absolute; left: 48px; top: 44px; font-family: "Inter"; font-size: 24px; font-weight: 600; letter-spacing: .2em; color: rgba(245,245,247,.5); }
+  .card .mini { position: absolute; right: 44px; top: 40px; width: 54px; opacity: .85; }
+  .card .cname { position: absolute; left: 46px; bottom: 96px; font-size: 92px; font-weight: 800; letter-spacing: -.045em; line-height: 1; }
+  .card .ctag { position: absolute; left: 50px; bottom: 54px; font-family: "Inter"; font-size: 24px; font-weight: 500; color: rgba(245,245,247,.6); letter-spacing: .02em; }
+
+  #pl { position: absolute; left: 0; right: 0; top: 140px; text-align: center; font-family: "Inter"; font-size: 30px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(245,245,247,.6); }
+
+  /* outro */
+  #outroSub { position: absolute; left: 0; right: 0; top: 760px; text-align: center; font-family: "Inter"; font-size: 30px; letter-spacing: .32em; text-transform: uppercase; color: rgba(245,245,247,.55); }
+  #fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="orb" id="orb1"></div>
+  <div class="orb" id="orb2"></div>
+  <div class="orb" id="orb3"></div>
+
+  <!-- logo lockup -->
+  <div id="divider"></div>
+  <div id="logoWrap">
+    <svg viewBox="23 72 625 566">
+      <defs>
+        <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+          <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+          <stop offset=".5" stop-color="#fff" stop-opacity="1"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <clipPath id="logoClip"><path id="clipPath" d=""/></clipPath>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="14" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <path id="logoFill" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+      <path id="logoStroke" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" filter="url(#glow)"/>
+      <g clip-path="url(#logoClip)">
+        <rect id="shineRect" x="0" y="40" width="260" height="640" fill="url(#shine)" transform="skewX(-20)"/>
+      </g>
+    </svg>
+  </div>
+  <div id="wordmark">
+    <div class="line1"><span class="lac"></span>&nbsp;<span class="teams"></span></div>
+    <div class="sub">Prime<b>|</b>Academy<b>|</b>Spark</div>
+  </div>
+
+  <!-- headlines -->
+  <div class="headline" id="h1"></div>
+  <div class="headline" id="h2"></div>
+
+  <!-- teams -->
+  <div class="team" id="tPrime"><div class="eyebrow">Team 01</div><div class="name">Prime</div></div>
+  <div class="team" id="tAcademy"><div class="eyebrow">Team 02</div><div class="name">Academy</div></div>
+  <div class="team" id="tSpark"><div class="eyebrow">Team 03</div><div class="name">Spark</div></div>
+
+  <!-- cards -->
+  <div id="pl">Prime League</div>
+  <div id="cards"></div>
+
+  <div id="outroSub">Drei Teams · Eine Organisation</div>
+
+  <canvas id="grain" width="480" height="270"></canvas>
+  <div id="vignette"></div>
+  <div id="fade"></div>
+</div>
+
+<script>
+const LOGO_D = "M340,82 L497,362 L435,362 L340,193 L128,570 L209,570 L340,336 L386,418 L520,418 L571,509 L515,509 L494,472 L416,472 L471,570 L605,570 L638,628 L443,628 L340,445 L270,570 L332,570 L365,628 L33,628 Z";
+const DURATION = 21;
+
+// ---------- easing ----------
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+// CSS-like cubic-bezier solver
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const sx = t => ((ax * t + bx) * t + cx) * t;
+  const sy = t => ((ay * t + by) * t + cy) * t;
+  const dx = t => (3 * ax * t + 2 * bx) * t + cx;
+  return x => {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    let t = x;
+    for (let i = 0; i < 8; i++) { const e = sx(t) - x; const d = dx(t); if (Math.abs(e) < 1e-6 || !d) break; t -= e / d; }
+    return sy(clamp(t));
+  };
+}
+const ease = {
+  apple: bezier(0.25, 0.1, 0.25, 1),       // default smooth
+  out: bezier(0.16, 1, 0.3, 1),            // expo-like out
+  inOut: bezier(0.65, 0, 0.35, 1),
+  in: bezier(0.55, 0, 1, 0.45),
+};
+// progress of t inside [start, start+dur]
+const p = (t, start, dur, e = ease.out) => e(clamp((t - start) / dur));
+// in-hold-out envelope
+const env = (t, inStart, inDur, outStart, outDur) =>
+  p(t, inStart, inDur) * (1 - p(t, outStart, outDur, ease.in));
+
+// ---------- build DOM ----------
+const $ = s => document.querySelector(s);
+const logoFill = $('#logoFill'), logoStroke = $('#logoStroke');
+logoFill.setAttribute('d', LOGO_D); logoStroke.setAttribute('d', LOGO_D); $('#clipPath').setAttribute('d', LOGO_D);
+const strokeLen = logoStroke.getTotalLength();
+logoStroke.style.strokeDasharray = strokeLen;
+
+function splitChars(el, text) {
+  return [...text].map(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s); return s; });
+}
+const lacChars = splitChars($('#wordmark .lac'), 'LAC');
+const teamsChars = splitChars($('#wordmark .teams'), 'TEAMS');
+const wmChars = [...lacChars, ...teamsChars];
+
+function splitWords(el, html) {
+  return html.split('|').map(w => { const s = document.createElement('span'); s.className = 'word'; s.innerHTML = w; el.appendChild(s); return s; });
+}
+const h1Words = splitWords($('#h1'), 'Drei|Teams.');
+const h2Words = splitWords($('#h2'), 'Eine|<span class="grad-brand">Organisation.</span>');
+const h3Words = []; // second headline line set reused later
+
+const teams = [
+  { id: 'Prime',   num: '01', tag: 'Prime League',   glow: '#8b5cf6' },
+  { id: 'Academy', num: '02', tag: 'Prime League',  glow: '#3b82f6' },
+  { id: 'Spark',   num: '03', tag: 'Prime League', glow: '#ec4899' },
+];
+const miniLogo = `<svg class="mini" viewBox="23 72 625 566"><path fill="#fff" d="${LOGO_D}"/></svg>`;
+const cards = teams.map(tm => {
+  const c = document.createElement('div'); c.className = 'card';
+  c.innerHTML = `<div class="glow" style="background:radial-gradient(circle, ${tm.glow}, transparent 70%)"></div>
+    <div class="num">${tm.num}</div>${miniLogo}
+    <div class="cname">${tm.id}</div><div class="ctag">${tm.tag}</div>`;
+  $('#cards').appendChild(c); return c;
+});
+
+// film grain (deterministic per frame)
+const g = $('#grain').getContext('2d');
+const gImg = g.createImageData(480, 270);
+function grain(seed) {
+  let s = seed * 9301 + 49297;
+  for (let i = 0; i < gImg.data.length; i += 4) {
+    s = (s * 16807) % 2147483647; const v = s & 255;
+    gImg.data[i] = gImg.data[i + 1] = gImg.data[i + 2] = v; gImg.data[i + 3] = 255;
+  }
+  g.putImageData(gImg, 0, 0);
+}
+
+// ---------- helpers ----------
+function setFx(el, { o = 1, x = 0, y = 0, s = 1, blur = 0, extra = '' } = {}) {
+  el.style.opacity = o;
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s}) ${extra}`;
+  el.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
+}
+// Apple-style "blur rise" reveal for a list of elements
+function reveal(els, t, start, stagger, dur, outStart, outDur, rise = 40, blurAmt = 18) {
+  els.forEach((el, i) => {
+    const a = p(t, start + i * stagger, dur);
+    const b = outStart == null ? 0 : p(t, outStart + i * stagger * 0.5, outDur, ease.inOut);
+    setFx(el, { o: a * (1 - b), y: (1 - a) * rise - b * rise * 0.6, blur: (1 - a) * blurAmt + b * blurAmt, s: 1 - b * 0.03 });
+  });
+}
+
+// ---------- render ----------
+window.render = function (t) {
+  grain(Math.floor(t * 24));
+
+  // ambient orbs drift slowly; brightness follows scene
+  const amb = 0.25 + 0.55 * p(t, 0, 2.5, ease.apple) - 0.2 * env(t, 9.6, 0.6, 14.4, 0.6);
+  const o1 = $('#orb1'), o2 = $('#orb2'), o3 = $('#orb3');
+  o1.style.transform = `translate(${-200 + Math.sin(t * .35) * 160}px, ${-250 + Math.cos(t * .27) * 120}px)`;
+  o2.style.transform = `translate(${1250 + Math.cos(t * .3) * 180}px, ${400 + Math.sin(t * .22) * 140}px)`;
+  o3.style.transform = `translate(${600 + Math.sin(t * .25 + 2) * 260}px, ${650 + Math.cos(t * .31) * 90}px)`;
+  o1.style.opacity = amb; o2.style.opacity = amb * 0.8; o3.style.opacity = amb * 0.55;
+
+  // ---- Scene 1: logo draw (0 – 6.4s) & Scene 6: outro (16.8 – 21s) ----
+  const logo = $('#logoWrap');
+  const draw = p(t, 0.5, 2.1, ease.inOut);
+  const fill = p(t, 2.0, 1.1, ease.apple);
+  logoStroke.style.strokeDashoffset = strokeLen * (1 - draw);
+  logoStroke.style.opacity = (draw > 0 ? 1 : 0) * (1 - p(t, 2.4, 0.9, ease.apple));
+  logoFill.style.opacity = fill;
+
+  // shine sweep across the logo
+  const sh1 = p(t, 2.7, 1.3, ease.inOut), sh2 = p(t, 18.0, 1.4, ease.inOut);
+  const shX = t < 10 ? lerp(-300, 900, sh1) : lerp(-300, 900, sh2);
+  const shRect = $('#shineRect');
+  shRect.setAttribute('x', shX);
+  shRect.style.opacity = (t < 10 ? (sh1 > 0 && sh1 < 1) : (sh2 > 0 && sh2 < 1)) ? 0.85 : 0;
+
+  // lockup motion: centered → slides left; then exits
+  const slide = p(t, 3.5, 1.4, ease.out);
+  const exit1 = p(t, 6.0, 0.8, ease.inOut);
+  // outro: logo comes back centered, smaller, above text
+  const outIn = p(t, 16.9, 1.6, ease.out);
+  const finalFade = p(t, 20.0, 1.0, ease.inOut);
+
+  let lx, ly, ls, lo, lb;
+  if (t < 12) {
+    lx = lerp(0, -510, slide); ly = 0;
+    ls = lerp(1.18, 1, p(t, 0.3, 3.4, ease.out)) * lerp(1, 0.94, exit1);
+    lo = (t < 0.5 ? 0 : 1) * (1 - exit1);
+    lb = exit1 * 20;
+  } else {
+    lx = 0; ly = lerp(-60, -90, outIn);
+    ls = lerp(0.55, 0.62, outIn) * lerp(1, 1.04, finalFade);
+    lo = outIn; lb = (1 - outIn) * 24;
+  }
+  setFx(logo, { o: lo, x: lx, y: ly, s: ls, blur: lb });
+  logo.style.filter = (lb > .05 ? `blur(${lb}px) ` : '') + `drop-shadow(0 0 ${30 + 30 * Math.sin(t * 1.5) ** 2}px rgba(139,92,246,${0.35 * fill}))`;
+  if (t >= 12) { logoStroke.style.opacity = 0; logoFill.style.opacity = 1; }
+
+  // divider
+  const div = $('#divider');
+  const dv = p(t, 3.8, 1.0, ease.out);
+  div.style.opacity = dv * (1 - exit1);
+  div.style.transform = `translateX(-200px) scaleY(${dv})`;
+
+  // wordmark
+  const wm = $('#wordmark');
+  wm.style.transform = `translate(-100px, -72px) scale(${lerp(1, 0.97, exit1)})`;
+  wm.style.opacity = 1 - exit1;
+  wm.style.filter = exit1 > .01 ? `blur(${exit1 * 16}px)` : 'none';
+  wm.style.letterSpacing = '0';
+  $('#wordmark .line1').style.letterSpacing = `${lerp(.6, .32, p(t, 4.0, 1.6, ease.out))}em`;
+  wmChars.forEach((c, i) => {
+    const a = p(t, 4.0 + i * 0.06, 0.9);
+    setFx(c, { o: a, x: (1 - a) * 30, blur: (1 - a) * 14 });
+  });
+  const sub = $('#wordmark .sub');
+  const sa = p(t, 4.9, 1.0);
+  setFx(sub, { o: sa * 1, y: (1 - sa) * 16, blur: (1 - sa) * 8 });
+
+  // ---- Scene 2: headline (6.8 – 9.8s) ----
+  reveal(h1Words, t, 6.9, 0.16, 1.0, 9.1, 0.7, 50, 20);
+  reveal(h2Words, t, 7.6, 0.18, 1.0, 9.2, 0.7, 40, 16);
+  // gradient shimmer
+  document.querySelectorAll('.grad-brand').forEach(el => el.style.backgroundPosition = `${(t * 30) % 200}% 0`);
+
+  // ---- Scene 3: team reveals (9.9 – 14.7s) ----
+  [['#tPrime', 10.0], ['#tAcademy', 11.6], ['#tSpark', 13.2]].forEach(([sel, st]) => {
+    const el = $(sel);
+    const a = p(t, st, 0.9, ease.out);
+    const b = p(t, st + 1.25, 0.5, ease.inOut);
+    const name = el.querySelector('.name'), eb = el.querySelector('.eyebrow');
+    el.style.opacity = a > 0 ? 1 : 0;
+    el.style.visibility = (a > 0 && b < 1) ? 'visible' : 'hidden';
+    setFx(name, { o: a * (1 - b), s: lerp(1.12, 1, a) * lerp(1, 0.92, b), blur: (1 - a) * 30 + b * 24, y: -b * 30 });
+    name.style.backgroundPosition = `${lerp(100, 0, p(t, st, 1.8, ease.apple))}% 0`;
+    const ea = p(t, st + 0.15, 0.8);
+    setFx(eb, { o: ea * (1 - b), y: (1 - ea) * 20 - b * 20, blur: (1 - ea) * 10 + b * 10 });
+  });
+
+  // ---- Scene 4: cards (14.8 – 16.9s) ----
+  const cardsOut = p(t, 16.6, 0.7, ease.inOut);
+  const pla = p(t, 14.8, 0.9);
+  setFx($('#pl'), { o: pla * (1 - cardsOut), y: (1 - pla) * 20, blur: (1 - pla) * 10 + cardsOut * 12 });
+  $('#cards').style.transform = `translateY(-250px)`;
+  cards.forEach((c, i) => {
+    const a = p(t, 14.9 + i * 0.14, 1.2, ease.out);
+    const out = p(t, 16.5 + i * 0.05, 0.7, ease.inOut);
+    setFx(c, {
+      o: a * (1 - out),
+      y: (1 - a) * 160 - out * 40,
+      s: lerp(0.92, 1, a) * lerp(1, 0.96, out),
+      blur: (1 - a) * 14 + out * 18,
+      extra: `rotateX(${(1 - a) * 18}deg)`
+    });
+    c.querySelector('.glow').style.transform = `translate(${Math.sin(t * .8 + i) * 60}px, ${Math.cos(t * .6 + i) * 30}px)`;
+  });
+  $('#cards').style.perspective = '1600px';
+
+  // ---- Scene 5: outro text ----
+  const wo = p(t, 17.6, 1.2);
+  // reuse wordmark-style text for outro via h1/h2 slots would clash; use dedicated layout:
+  const os = $('#outroSub');
+  setFx(os, { o: wo, y: (1 - wo) * 20, blur: (1 - wo) * 10 });
+
+  if (!window._outroTitle) {
+    const d = document.createElement('div');
+    d.id = 'outroTitle';
+    d.style.cssText = 'position:absolute;left:0;right:0;top:650px;text-align:center;font-size:84px;line-height:1;letter-spacing:.32em;padding-left:.32em;';
+    d.innerHTML = '<span style="font-weight:200">LAC</span> <span style="font-weight:700">TEAMS</span>';
+    $('#stage').insertBefore(d, $('#grain'));
+    window._outroTitle = d;
+  }
+  const ot = p(t, 17.3, 1.3);
+  setFx(window._outroTitle, { o: ot, y: (1 - ot) * 30, blur: (1 - ot) * 16 });
+  window._outroTitle.style.letterSpacing = `${lerp(.5, .32, ot)}em`;
+
+  // global fade in/out
+  $('#fade').style.opacity = 1 - p(t, 0, 0.6, ease.apple) + finalFade;
+};
+
+window.DURATION = DURATION;
+// live preview when opened in a browser
+if (!location.search.includes('capture')) {
+  const t0 = performance.now();
+  (function loop() { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
