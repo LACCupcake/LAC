@@ -65,15 +65,14 @@
             <stop offset=".55" stop-color="#ffffff"/>
             <stop offset="1" stop-color="#ffffff"/>
           </linearGradient>
-          <clipPath id="logoClip"><path id="clipShape"/></clipPath>
+          <mask id="logoMask" maskUnits="userSpaceOnUse" x="-500" y="-500" width="3000" height="2000"><g id="maskG" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path id="mMain"/><path id="mC"/><path id="mFoot"/></g></mask>
         </defs>
         <g id="snakeG" fill="none" stroke="url(#snakeGrad)" stroke-linecap="round" stroke-linejoin="round">
           <path id="snake"/>
           <path id="branchC"/>
           <path id="branchFoot"/>
         </g>
-        <path id="sharp" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
-        <g clip-path="url(#logoClip)"><rect id="shineRect" y="40" width="240" height="640" fill="url(#shine)" transform="skewX(-20)"/></g>
+        <g mask="url(#logoMask)"><rect id="shineRect" y="40" width="240" height="640" fill="url(#shine)" transform="skewX(-20)"/></g>
       </svg>
     </div>
     <div id="wordmark"><span class="lac"></span>&nbsp;<span class="teams"></span></div>
@@ -96,8 +95,6 @@
 const DURATION = 12;
 
 // --- logo geometry (viewBox units) ---------------------------------------
-// exact brand outline, used once the line has settled
-const LOGO_D = "M340,82 L497,362 L435,362 L340,193 L128,570 L209,570 L340,336 L386,418 L520,418 L571,509 L515,509 L494,472 L416,472 L471,570 L605,570 L638,628 L443,628 L340,445 L270,570 L332,570 L365,628 L33,628 Z";
 // centre-line of the logo strokes, drawn with round caps/joins
 const LEAD = "M1750,260 C1520,260 1480,720 1260,720 C1040,720 1010,430 850,430 C700,430 690,599 593,599";
 const MAIN = "L457.1,599 L340,390.5 L222.9,599 L81,599 L340,137.5 L450.4,334";
@@ -130,10 +127,10 @@ const p = (t, start, dur, e = ease.out) => e(clamp((t - start) / dur));
 
 // --- DOM ---------------------------------------------------------------
 const $ = s => document.querySelector(s);
-const snake = $('#snake'), brC = $('#branchC'), brF = $('#branchFoot'), sharp = $('#sharp');
+const snake = $('#snake'), brC = $('#branchC'), brF = $('#branchFoot');
 snake.setAttribute('d', LEAD + MAIN);
 brC.setAttribute('d', BRANCH_C); brF.setAttribute('d', BRANCH_FOOT);
-sharp.setAttribute('d', LOGO_D); $('#clipShape').setAttribute('d', LOGO_D);
+$('#mMain').setAttribute('d', 'M593,599 ' + MAIN); $('#mC').setAttribute('d', BRANCH_C); $('#mFoot').setAttribute('d', BRANCH_FOOT);
 
 // measure lengths
 const tmp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -195,17 +192,17 @@ window.render = function (t) {
   const swell = p(t, 1.95, 0.75, ease.smooth);
   const width = lerp(14, STROKE_FULL, swell);
   snake.style.strokeWidth = width;
-  snake.style.strokeDasharray = `0 ${tail} ${Math.max(0.001, head - tail)} ${totalLen * 2}`;
+  snake.style.strokeDasharray = `${Math.max(0.001, head - tail)} ${totalLen * 2}`;
+  snake.style.strokeDashoffset = -tail;
+  snake.style.opacity = head > 1 ? 1 : 0;
   [[brC, jC, cLen], [brF, jF, fLen]].forEach(([el, j, len]) => {
     const l = clamp(head - j, 0, len);
     el.style.strokeWidth = width;
     el.style.strokeDasharray = `${Math.max(0.001, l)} ${len * 2}`;
     el.style.opacity = l > 0.5 ? 1 : 0;
   });
-  // rounded line → exact brand mark, hidden under a light sweep
-  const settle = p(t, 2.55, 0.45, ease.smooth);
-  sharp.style.opacity = settle;
-  $('#snakeG').style.opacity = 1 - p(t, 2.75, 0.3, ease.smooth);
+  // light sweep over the rounded mark
+  $('#maskG').style.strokeWidth = width;
   const sh = p(t, 2.4, 1.0, ease.inOut);
   const sh2 = p(t, 8.3, 1.1, ease.inOut);
   const sr = $('#shineRect');
